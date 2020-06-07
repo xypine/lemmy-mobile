@@ -520,7 +520,6 @@
         <mkdir dir="lib/impl/native/win" />
         <mkdir dir="lib/impl/native/javascript" />
         <installLibs lib="lib" dest="lib/impl" />
-        <generateGuiSources srcDir="src" encoding="UTF-8" guiDir="res/guibuilder"  />
     </target>
 
     <target name="-post-jar">

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component type="Form" layout="LayeredLayout" layeredLayoutPreferredWidthMM="0.0" layeredLayoutPreferredHeightMM="0.0"  autolayout="true" title="Home" scrollableY="false" name="Home">
+  <component type="Container" layout="LayeredLayout" layeredLayoutPreferredWidthMM="180.42328" layeredLayoutPreferredHeightMM="14.814815"  styles="bgColor:ee6600; transparency:208; bgImage:;" preferredSize="180.42328mm 14.814815mm" name="Container">
+    <layoutConstraint insets="0.0mm 0.0mm auto 0.0mm" referenceComponents="-1 -1 -1 -1" referencePositions="0.0 0.0 0.0 0.0" />
+    <component type="Label" text="Lemmy" preferredSize="75.66138mm 9.259259mm" name="Label">
+      <layoutConstraint insets="auto auto 2.1164021mm 8.504399%" referenceComponents="1 -1 1 -1" referencePositions="0.0 0.0 0.0 0.0" />
+    </component>
+    <component type="Button" text="" styles="transparency:0; opacity:1000;" preferredSize="29.89418mm 12.698413mm" icon="fontImage:e5d2" name="Button">
+      <layoutConstraint insets="0.0mm auto 0.0mm 0.0mm" referenceComponents="-1 -1 -1 -1" referencePositions="0.0 0.0 0.0 0.0" />
+    </component>
+  </component>
+</component>

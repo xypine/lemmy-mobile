@@ -21,6 +21,9 @@ import com.codename1.ui.validation.GroupConstraint;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,7 +115,7 @@ public class LemmyMain {
         f.show();
         
         //Load contents
-        String host = "forum.mesbees.com";
+        String host = "dev.lemmy.ml";
         String url = "wss://" + host + "/api/v1/ws";
         WebSocket sock = new WebSocket(url) {
             @Override
@@ -120,9 +123,24 @@ public class LemmyMain {
                 System.out.println("Websocket opened!");
                 System.out.println("Making request...");
                 Map<String,String> arg = new HashMap();
-                arg.put("op", "ListCategories");
-                System.out.println(JSONParser.mapToJson(arg));
-                this.send(JSONParser.mapToJson(arg));
+                arg.put("op", "GetSite");
+                String q = 
+                    "{\n" +
+                    "  op: \"Search\",\n" +
+                    "  data: {\n" +
+                    "    q: \"Lemmy\",\n" +
+                    "    type_: \"Posts\",\n" +
+ //                   "    community_id: Option<i32>,\n" +
+                    "    sort: \"TopAll\",\n" +
+//                    "    page: Option<i64>,\n" +
+//                    "    limit: Option<i64>,\n" +
+//                    "    auth?: Option<String>,\n" +
+                    "  }\n" +
+                    "}"
+                ;
+                System.out.println(q);
+                JSONParser.setIncludeNulls(false);
+                this.send(q);
             }
             
             @Override
@@ -132,7 +150,14 @@ public class LemmyMain {
             
             @Override
             protected void onMessage(String arg0) {
-                System.out.println("Incoming data: ");
+                System.out.println("Raw data: " + arg0);
+                Reader i = new StringReader(arg0);
+                JSONParser parser = new JSONParser();
+                try {
+                    //System.out.println("Incoming data: " + parser.parseJSON(i));
+                } catch (Exception ex) {
+                    System.out.println("Invalid message received: " + arg0 + ".\nError: " + ex);
+                }
             }
             
             @Override
