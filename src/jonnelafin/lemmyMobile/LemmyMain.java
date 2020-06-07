@@ -152,9 +152,10 @@ public class LemmyMain {
                     Map<String, Object> data = (Map<String, Object>) parser.parseJSON(i).get("data");
                     ArrayList posts = (ArrayList) data.get("posts");
                     LemmyMain.feed.removeAll();
-                    for(Object title : posts){
+                    for(Object meta : posts){
                         //System.out.println(title);
-                        LemmyMain.feed.add(new SpanLabel( (String) ((LinkedHashMap) (title)).get("name")));
+                        LinkedHashMap post = (LinkedHashMap) meta;
+                        LemmyMain.feed.add(new SpanLabel( (String) post.get("name")));
                         //break;
                         LemmyMain.feed.repaint();
                         LemmyMain.feed.show();
