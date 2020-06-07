@@ -24,7 +24,9 @@ import com.codename1.ui.validation.Validator;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -37,6 +39,8 @@ public class LemmyMain {
     private Resources theme;
 
     private Form home;
+    
+    public static Form feed;
 
     public void init(Object context) {
         // use two network threads instead of one
@@ -106,10 +110,10 @@ public class LemmyMain {
         home.show();
         showOKForm("User");
     }
-
     private void showOKForm(String name) {
-        Form f = new Form("Thanks", BoxLayout.y());
-        SpanLabel loadInfo = new SpanLabel("Loading submissions...");
+        Form f = new Form("Feed", BoxLayout.y());
+        feed = f;
+        SpanLabel loadInfo = new SpanLabel("Fetching submissions...");
         f.add(loadInfo);
         f.getToolbar().setBackCommand("", e -> home.showBack());
         f.show();
@@ -118,26 +122,17 @@ public class LemmyMain {
         String host = "dev.lemmy.ml";
         String url = "wss://" + host + "/api/v1/ws";
         WebSocket sock = new WebSocket(url) {
+            
+            
+            
+            
             @Override
             protected void onOpen() {
                 System.out.println("Websocket opened!");
                 System.out.println("Making request...");
                 Map<String,String> arg = new HashMap();
                 arg.put("op", "GetSite");
-                String q = 
-                    "{\n" +
-                    "  op: \"Search\",\n" +
-                    "  data: {\n" +
-                    "    q: \"Lemmy\",\n" +
-                    "    type_: \"Posts\",\n" +
- //                   "    community_id: Option<i32>,\n" +
-                    "    sort: \"TopAll\",\n" +
-//                    "    page: Option<i64>,\n" +
-//                    "    limit: Option<i64>,\n" +
-//                    "    auth?: Option<String>,\n" +
-                    "  }\n" +
-                    "}"
-                ;
+                String q = "{\"op\": \"GetPosts\", \"data\": {\"type_\": \"All\", \"sort\": \"TopAll\"}}";
                 System.out.println(q);
                 JSONParser.setIncludeNulls(false);
                 this.send(q);
@@ -150,11 +145,20 @@ public class LemmyMain {
             
             @Override
             protected void onMessage(String arg0) {
-                System.out.println("Raw data: " + arg0);
+                //System.out.println("Raw data: " + arg0);
                 Reader i = new StringReader(arg0);
                 JSONParser parser = new JSONParser();
                 try {
-                    //System.out.println("Incoming data: " + parser.parseJSON(i));
+                    Map<String, Object> data = (Map<String, Object>) parser.parseJSON(i).get("data");
+                    ArrayList posts = (ArrayList) data.get("posts");
+                    LemmyMain.feed.removeAll();
+                    for(Object title : posts){
+                        //System.out.println(title);
+                        LemmyMain.feed.add(new SpanLabel( (String) ((LinkedHashMap) (title)).get("name")));
+                        //break;
+                        LemmyMain.feed.repaint();
+                        LemmyMain.feed.show();
+                    }
                 } catch (Exception ex) {
                     System.out.println("Invalid message received: " + arg0 + ".\nError: " + ex);
                 }
