@@ -1,5 +1,6 @@
 package jonnelafin.lemmyMobile;
 
+import com.codename1.charts.util.ColorUtil;
 import static com.codename1.ui.CN.*;
 import com.codename1.components.SpanLabel;
 import com.codename1.io.JSONParser;
@@ -10,18 +11,21 @@ import com.codename1.ui.Form;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import com.codename1.ui.Container;
+import com.codename1.ui.Font;
 import com.codename1.ui.FontImage;
+import com.codename1.ui.Label;
 import com.codename1.ui.PickerComponent;
 import com.codename1.ui.TextComponent;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.layouts.TextModeLayout;
+import com.codename1.ui.plaf.Style;
 import com.codename1.ui.validation.GroupConstraint;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -70,7 +74,10 @@ public class LemmyMain {
             current.show();
             return;
         }
-
+        
+        
+        
+        
         TextModeLayout tm = new TextModeLayout(4, 2);
         home = new Form("Home", new BorderLayout());
         Container content = new Container(tm);
@@ -113,9 +120,18 @@ public class LemmyMain {
     private void showOKForm(String name) {
         Form f = new Form("Feed", BoxLayout.y());
         feed = f;
+        
+        Toolbar tb = feed.getToolbar();
+        
+        tb.addMaterialCommandToSideMenu("Home", FontImage.MATERIAL_HOME, e -> {});
+        tb.addMaterialCommandToSideMenu("Website", FontImage.MATERIAL_WEB, e -> {});
+        tb.addMaterialCommandToSideMenu("Settings", FontImage.MATERIAL_SETTINGS, e -> {});
+        tb.addMaterialCommandToSideMenu("About", FontImage.MATERIAL_INFO, e -> {});
+        
         SpanLabel loadInfo = new SpanLabel("Fetching submissions...");
         f.add(loadInfo);
-        f.getToolbar().setBackCommand("", e -> home.showBack());
+        
+        //f.getToolbar().setBackCommand("", e -> home.showBack());
         f.show();
         
         //Load contents
@@ -155,7 +171,8 @@ public class LemmyMain {
                     for(Object meta : posts){
                         //System.out.println(title);
                         LinkedHashMap post = (LinkedHashMap) meta;
-                        LemmyMain.feed.add(new SpanLabel( (String) post.get("name")));
+                        //LemmyMain.feed.add(new SpanLabel( (String) post.get("name")));
+                        addCard((String) post.get("name"));
                         //break;
                         LemmyMain.feed.repaint();
                         LemmyMain.feed.show();
@@ -176,6 +193,42 @@ public class LemmyMain {
             }
         };
         sock.connect();
+    }
+    
+    
+    static boolean cardBg = false;
+    protected static void addCard(String title){
+        Layout l = new BorderLayout();
+        Container c = new Container(l);
+        c.setFocusable(true);
+        c.setDraggable(true);
+        c.setHeight(c.getHeight()*10);
+        c.setTactileTouch(true);
+        c.setRippleEffect(true);
+        
+        int bg = ColorUtil.rgb(0, 0, 0);
+        if(cardBg){
+            bg = ColorUtil.rgb(50, 50, 50);
+        }
+        int fg = ColorUtil.rgb(255, 255, 255);
+        Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
+        c.setSelectedStyle(card_style);
+        
+        Label icon = new Label("");
+        icon.setSelectedStyle(card_style);
+        FontImage.setMaterialIcon(icon, FontImage.MATERIAL_LINK);
+        //c.add(BorderLayout.WEST, new SpanLabel(FontImage.MATERIAL_LINK+""));
+        c.add(BorderLayout.WEST, icon);
+        
+        
+        Label name = new Label(title);
+        name.setSelectedStyle(card_style);
+        c.add(BorderLayout.CENTER, name);
+        
+        
+        feed.add(c);
+        //c.animateLayoutFade(1, 0);
+        cardBg = !cardBg;
     }
     
     public void stop() {
