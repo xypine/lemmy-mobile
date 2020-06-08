@@ -3,6 +3,8 @@ package jonnelafin.lemmyMobile;
 import com.codename1.charts.util.ColorUtil;
 import static com.codename1.ui.CN.*;
 import com.codename1.components.SpanLabel;
+import com.codename1.components.xmlview.DefaultXMLViewKit;
+import com.codename1.components.xmlview.XMLView;
 import com.codename1.io.JSONParser;
 import com.codename1.io.websocket.WebSocket;
 import com.codename1.ui.Button;
@@ -30,7 +32,10 @@ import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.RegexConstraint;
 import com.codename1.ui.validation.Validator;
 import com.codename1.ui.*;
+import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.html.HTMLComponent;
+import com.codename1.xml.Element;
+import com.codename1.xml.XMLParser;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -143,9 +148,13 @@ public class LemmyMain {
         }
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         String htmlBody = renderer.render(document);
+        
+        BrowserComponent browser = new BrowserComponent();
+        browser.setPage(htmlBody, null);
+        
         Container postC = new Container();
             postC.add(new SpanLabel((String) post.get("name")));
-            postC.add(new TextArea(htmlBody));
+            postC.add(browser); //new TextArea(htmlBody)
         f.add(postC);
         //f.add()
         //feed = f;
@@ -180,13 +189,14 @@ public class LemmyMain {
             
             
             
+            String op = "GetPosts";
             @Override
             protected void onOpen() {
                 System.out.println("Websocket opened!");
                 System.out.println("Making request...");
                 JSONParser.setIncludeNulls(false);
                 Map<String,Object> arg = new HashMap();
-                arg.put("op", "GetPosts");
+                arg.put("op", op);
                     Map<String,String> inpData = new HashMap<>();
                     inpData.put("type_", "All");
                     inpData.put("sort", "TopAll");
@@ -229,14 +239,19 @@ public class LemmyMain {
                 Reader i = new StringReader(arg0);
                 JSONParser parser = new JSONParser();
                 try {
-                    Map<String, Object> data = (Map<String, Object>) parser.parseJSON(i).get("data");
+                    Map<String, Object> message = parser.parseJSON(i);
+                    Map<String, Object> data = (Map<String, Object>) message.get("data");
+                    if(!message.get("op").equals(op)){
+                        throw new Exception("Operation \"" + message.get(op) + "\" not expexted.");
+                    }
                     ArrayList posts = (ArrayList) data.get("posts");
                     LemmyMain.feed.removeAll();
                     for(Object meta : posts){
                         //System.out.println(title);
                         LinkedHashMap post = (LinkedHashMap) meta;
+                        
                         //LemmyMain.feed.add(new SpanLabel( (String) post.get("name")));
-                        //System.out.println("Post keys: " + post.keySet());
+                        System.out.println("Post keys: " + post.keySet());
                         String url = null;
                         try {
                             url = (String) post.get("thumbnail_url");
@@ -300,17 +315,26 @@ public class LemmyMain {
         Label icon = new Label("");
         icon.setSelectedStyle(card_style);
         if (url == null) {
-            FontImage.setMaterialIcon(icon, FontImage.MATERIAL_LINK);
+            String imgUrl = (String) raw.get("creator_avatar");
+            //System.out.println(imgUrl);
+            try {
+                EncodedImage p = EncodedImage.createFromImage(Image.createImage(100, 100, 0xffff0000), true);
+                URLImage img = URLImage.createToStorage(p, "/" + cardCount + "profile", imgUrl);
+                icon.setIcon(img);
+            } catch (Exception e) {
+                FontImage.setMaterialIcon(icon, FontImage.MATERIAL_LINK);
+            }
         } else {
             try {
-                EncodedImage p = EncodedImage.createFromImage(Image.createImage(50, 50, 0xffff0000), true);
-                URLImage img = URLImage.createToStorage(p , "/"+cardCount+url, "https://dev.lemmy.ml/pictshare/192/"+url);
+                EncodedImage p = EncodedImage.createFromImage(Image.createImage(100, 100, 0xffff0000), true);
+                URLImage img = URLImage.createToStorage(p, "/" + cardCount + url, "https://dev.lemmy.ml/pictshare/192/" + url);
                 icon.setIcon(img);
             } catch (Exception e) {
                 FontImage.setMaterialIcon(icon, FontImage.MATERIAL_LINK);
             }
         }
         //c.add(BorderLayout.WEST, new SpanLabel(FontImage.MATERIAL_LINK+""));
+        icon.setSize(new Dimension(300, 300));
         c.add(BorderLayout.WEST, icon);
         
         
