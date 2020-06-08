@@ -755,6 +755,7 @@
         <border key="border" type="empty" />
         <val key="fgColor" value="ffffff" />
         <font key="font" type="ttf" face="0" style="0" size="0" name="native:MainRegular" family="native:MainRegular" sizeSettings="3" actualSize="3.0" />
+        <font key="null.font" type="system" face="0" style="0" size="16" />
         <border key="press#border" type="empty" />
         <border key="sel#border" type="empty" />
         <val key="transparency" value="0" />
