@@ -130,7 +130,12 @@ public class LemmyMain {
     private static void showPost(LinkedHashMap post){
         BoxLayout layout = BoxLayout.y();
         //layout.
-        Form f = new Form(((String) post.get("name")).substring(0, 12), layout);
+        Form f = new Form("", layout);
+        Container postC = new Container();
+            postC.add(new SpanLabel((String) post.get("name")));
+            postC.add(new SpanLabel((String) post.get("body")));
+        f.add(postC);
+        //f.add()
         //feed = f;
         f.getToolbar().setBackCommand("", e -> feed.showBack());
         f.show();
@@ -297,7 +302,7 @@ public class LemmyMain {
         c.add(BorderLayout.WEST, icon);
         
         
-        Label name = new Label(title);
+        SpanLabel name = new SpanLabel(title);
         name.setSelectedStyle(card_style);
         c.add(BorderLayout.CENTER, name);
         
