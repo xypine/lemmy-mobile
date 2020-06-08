@@ -1,0 +1,10 @@
+
+/* /coding/lemmy-mobile/css/theme.css */
+#Constants {
+    includeNativeBool: true; 
+}
+{
+	background: black;
+}
+
+/* End /coding/lemmy-mobile/css/theme.css */
