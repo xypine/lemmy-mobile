@@ -13,6 +13,7 @@ import com.codename1.ui.Font;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
+import com.codename1.ui.TextArea;
 import com.codename1.ui.URLImage;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
@@ -125,9 +126,10 @@ public class Comment extends Container{
         owner.setSelectedStyle(card_style);
         c.add(BorderLayout.NORTH, owner);
         
-        SpanLabel name = new SpanLabel(content);
-        name.setUnselectedStyle(card_style);
-        name.setSelectedStyle(card_style);
+        Style card_style2 = new Style(fg, bg, Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL), Byte.MAX_VALUE);
+        TextArea name = new TextArea(content);
+        name.setUnselectedStyle(card_style2);
+        name.setSelectedStyle(card_style2);
         c.add(BorderLayout.CENTER, name);
         
         c.add(BorderLayout.EAST, new Label("                    "));

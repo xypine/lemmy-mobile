@@ -18,6 +18,7 @@ import com.codename1.ui.FontImage;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.PickerComponent;
+import com.codename1.ui.TextArea;
 import com.codename1.ui.TextComponent;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.URLImage;
@@ -188,7 +189,8 @@ public class LemmyMain {
         
         Container postC = new Container();
             postC.add(new SpanLabel((String) post.get("name")));
-            postC.add(new SpanLabel(document)); //new TextArea(htmlBody)
+            postC.add(new TextArea(document)); //new TextArea(htmlBody)
+            postC.add(new SpanLabel("Post by " + post.get("creator_name")));
             //postC.add(commentSortCont);
         f.add(postC);
         f.add(new Label(commentCount2 + " Comments"));

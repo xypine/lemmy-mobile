@@ -170,7 +170,6 @@
         <font key="CalendarDay.dis#font" type="system" face="0" style="0" size="0" />
         <val key="CalendarDay.dis#margin" value="0.0,0.0,0.0,0.0" />
         <val key="CalendarDay.dis#transparency" value="0" />
-        <val key="CalendarDay.fgColor" value="0" />
         <font key="CalendarDay.font" type="ttf" face="0" style="0" size="0" name="native:MainThin" family="native:MainThin" sizeSettings="3" actualSize="3.0" />
         <val key="CalendarDay.margin" value="0.0,0.0,0.0,0.0" />
         <val key="CalendarDay.press#align" value="4" />
@@ -679,10 +678,10 @@
         <font key="TextArea.sel#font" type="ttf" face="0" style="0" size="0" name="native:MainRegular" family="native:MainRegular" sizeSettings="3" actualSize="3.0" />
         <val key="TextArea.sel#transparency" value="0" />
         <val key="TextArea.transparency" value="0" />
-        <val key="TextField.bgColor" value="333333" />
+        <val key="TextField.bgColor" value="191919" />
         <gradient key="TextField.bgGradient" color1="0" color2="0" posX="0.5" posY="0.5" radius="1.0" />
         <val key="TextField.bgType" value="0" />
-        <border key="TextField.border" type="line" millimeters="false" thickness="1.0" color="10066329" />
+        <val key="TextField.fgColor" value="ffffff" />
         <font key="TextField.font" type="ttf" face="0" style="0" size="0" name="native:MainRegular" family="native:MainRegular" sizeSettings="3" actualSize="3.0" />
         <val key="TextField.marUnit" value="2,2,2,2" />
         <val key="TextField.margin" value="1.0,1.0,1.0,1.0" />
@@ -702,7 +701,6 @@
         <val key="TextField.sel#marUnit" value="2,2,2,2" />
         <val key="TextField.sel#margin" value="1.0,1.0,1.0,1.0" />
         <val key="TextField.sel#transparency" value="0" />
-        <val key="TextField.transparency" value="0" />
         <val key="TextHint.fgColor" value="999999" />
         <font key="TextHint.font" type="ttf" face="0" style="0" size="0" name="native:ItalicThin" family="native:ItalicThin" sizeSettings="3" actualSize="3.0" />
         <val key="Title.align" value="4" />
