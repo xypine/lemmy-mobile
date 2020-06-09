@@ -47,6 +47,8 @@ import static jonnelafin.lemmyMobile.LemmyMain.addPostCard;
  */
 public class LemmyMain {
 
+    public static String host = "dev.lemmy.ml";
+    
     private Form current;
     private Resources theme;
 
@@ -94,14 +96,24 @@ public class LemmyMain {
         Container content = new Container(tm);
         content.add(tm.createConstraint().horizontalSpan(2), new SpanLabel("Welcome to Lemmy!"));
         
-        TextComponent name = new TextComponent().labelAndHint("Name");
+        TextComponent name = new TextComponent().labelAndHint("Server: ");
+        int fg = ColorUtil.rgb(255, 255, 255);
+        int bg = ColorUtil.rgb(0, 0, 0);
+        Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
+        name.setUnselectedStyle(card_style);
+        name.setSelectedStyle(card_style);
+        name.getField().setSelectedStyle(card_style);
+        name.getField().setUnselectedStyle(card_style);
+        name.getField().setText(host);
         content.add(tm.createConstraint().horizontalSpan(2), name);
+        
+        
 
         TextComponent bio = new TextComponent().labelAndHint("Bio").multiline(true).rows(3);
-        content.add(tm.createConstraint().horizontalSpan(2), bio);
+        //content.add(tm.createConstraint().horizontalSpan(2), bio);
 
         PickerComponent gender = PickerComponent.createStrings("Unspecified", "Male", "Female", "Other").label("Gender");
-        content.add(gender);
+        //content.add(gender);
 
         PickerComponent dateOfBirth = PickerComponent.createDate(null).label("Birthday");
         //content.add(dateOfBirth);
@@ -119,14 +131,14 @@ public class LemmyMain {
         
         Validator val = new Validator();
         val.setShowErrorMessageForFocusedComponent(true);
-        val.addConstraint(name, 
-                new GroupConstraint(
-                        new LengthConstraint(2), 
-                        new RegexConstraint("^([a-zA-Z ]*)$", "Please only use latin characters for name"))).
-                addSubmitButtons(submit);
+//        val.addConstraint(name, 
+//                new GroupConstraint(
+//                        new LengthConstraint(2), 
+//                        new RegexConstraint("^([a-zA-Z ]*)$", "Please only use latin characters for name"))).
+//                addSubmitButtons(submit);
 
         home.show();
-        showFeed("User");
+        //showFeed("User");
     }
     
     private static void showPost(LinkedHashMap post){
@@ -191,7 +203,7 @@ public class LemmyMain {
         
         //Get comments
         int id = (int) Math.round( (Double) post.get("id"));
-        String host = "dev.lemmy.ml";
+        
         String url = "wss://" + host + "/api/v1/ws";
         Map<String,Object> arg = new HashMap();
         String op = "GetPost";
@@ -206,6 +218,7 @@ public class LemmyMain {
     }
     
     private void showFeed(String name) {
+        host = name;
         BoxLayout layout = BoxLayout.y();
         //layout.
         Form f = new Form("Feed", layout);
@@ -225,7 +238,6 @@ public class LemmyMain {
         f.show();
         
         //Load contents
-        String host = "dev.lemmy.ml";
         String url = "wss://" + host + "/api/v1/ws";
         Map<String,Object> arg = new HashMap();
         String op = "GetPosts";
