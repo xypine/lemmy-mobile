@@ -101,8 +101,8 @@ public class LemmyMain {
         int fg = ColorUtil.rgb(255, 255, 255);
         int bg = ColorUtil.rgb(0, 0, 0);
         Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
-        name.setUnselectedStyle(card_style);
-        name.setSelectedStyle(card_style);
+        //name.setUnselectedStyle(card_style);
+        //name.setSelectedStyle(card_style);
         name.getField().setSelectedStyle(card_style);
         name.getField().setUnselectedStyle(card_style);
         name.getField().setText(host);

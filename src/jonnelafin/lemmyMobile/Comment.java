@@ -126,7 +126,7 @@ public class Comment extends Container{
         owner.setSelectedStyle(card_style);
         c.add(BorderLayout.NORTH, owner);
         
-        Style card_style2 = new Style(fg, bg, Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL), Byte.MAX_VALUE);
+        Style card_style2 = new Style(fg, bg, Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_MEDIUM), Byte.MAX_VALUE);
         TextArea name = new TextArea(content);
         name.setUnselectedStyle(card_style2);
         name.setSelectedStyle(card_style2);
