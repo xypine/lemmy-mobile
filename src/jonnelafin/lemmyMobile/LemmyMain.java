@@ -189,11 +189,11 @@ public class LemmyMain {
         
         Container postC = new Container();
             postC.add(new SpanLabel((String) post.get("name")));
-            postC.add(new TextArea(document)); //new TextArea(htmlBody)
-            postC.add(new SpanLabel("Post by " + post.get("creator_name")));
+            postC.add(Parser.parse(document)); //new TextArea(htmlBody)
+            postC.add(new SpanLabel("--- Post by " + post.get("creator_name")) + " ---");
             //postC.add(commentSortCont);
-        f.add(Parser.parse(document));
-        f.add(new Label(commentCount2 + " Comments"));
+        f.add(postC);
+        f.add(new Label(commentCount2 + " Comments."));
         f.add(commentCont);
         //f.add()
         //feed = f;

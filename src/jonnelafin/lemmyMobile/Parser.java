@@ -10,6 +10,8 @@ import com.codename1.components.SpanLabel;
 import com.codename1.ui.Container;
 import com.codename1.ui.Display;
 import com.codename1.ui.Font;
+import com.codename1.ui.Label;
+import com.codename1.ui.TextArea;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.util.regex.RE;
@@ -65,6 +67,26 @@ public class Parser {
         }
         return links;
     }
+    public static String getClean(String line){
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> links = new ArrayList<>();
+        
+        RE r = new RE("(?:__|[*#])|\\[(.*?)\\]\\(.*?\\)");
+        boolean d = r.match(line);
+        int i = 0;
+        while(d){
+            String rid = r.getParen(0);
+            String name = r.getParen(1);
+            String link = rid.substring(name.length()+3, rid.length()-1);
+            links.add(link);
+            names.add(name);
+            int where = line.indexOf(rid);
+            line = line.substring(0, where) + "[" + i + "]" + line.substring(where+rid.length());
+            i++;
+            d = r.match(line);
+        }
+        return line;
+    }
     
     public static void main(String[] args) {
         String line = "Hi! [Here is a link](https://test.link) see, if it works! \n [here](is another) EOF";
@@ -79,9 +101,11 @@ public class Parser {
         FlowLayout layout = new FlowLayout();
         Container body = new Container(layout);
         
-        SpanLabel posts = new SpanLabel(post2);
+        TextArea posts = new TextArea(getClean(post2));
         body.add(posts);
+        //body.setEditable()
         
+        body.add(new Label("Links:"));
         int i = 0;
         for(String name : names){
             String link = links.get(i);
@@ -89,12 +113,13 @@ public class Parser {
             int bg = ColorUtil.rgb(0, 0, 0);
             int fg = ColorUtil.rgb(25, 25, 255);
             Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
-            SpanLabel alink = new SpanLabel(name);
+            SpanLabel alink = new SpanLabel("   [" + i + "]:"+ name);
             alink.setUnselectedStyle(card_style);
             alink.addPointerReleasedListener((arg0) -> {
                 Display.getInstance().execute(link);
             });
             body.add(alink);
+            i++;
         }
         
         
