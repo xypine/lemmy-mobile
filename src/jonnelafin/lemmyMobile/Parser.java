@@ -25,11 +25,7 @@ public class Parser {
     //This was a bad idea.
     //[Later] Well, it seems as the browser doesn't work too well. I'll try this again.
     
-    
-    public static void main(String[] args) {
-        String line = "Hi! [Here is a link](https://test.link) see, if it works! \n [here](is another) EOF";
-        
-        
+    public static ArrayList<String> getNames(String line){
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> links = new ArrayList<>();
         
@@ -37,7 +33,6 @@ public class Parser {
         boolean d = r.match(line);
         int i = 0;
         while(d){
-            System.out.println(r.match(line));
             String rid = r.getParen(0);
             String name = r.getParen(1);
             String link = rid.substring(name.length()+3, rid.length()-1);
@@ -45,119 +40,64 @@ public class Parser {
             names.add(name);
             int where = line.indexOf(rid);
             line = line.substring(0, where) + "[" + i + "]" + line.substring(where+rid.length());
-            System.out.println("Name: " + name);
             i++;
             d = r.match(line);
         }
+        return names;
+    }
+    public static ArrayList<String> getLinks(String line){
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> links = new ArrayList<>();
         
-        System.out.println(line);
-        System.out.println("Links: ");
-        i = 0;
-        for(String l : names){
-            System.out.println("    [" + i + "]: " + l + ", " + links.get(i));
+        RE r = new RE("(?:__|[*#])|\\[(.*?)\\]\\(.*?\\)");
+        boolean d = r.match(line);
+        int i = 0;
+        while(d){
+            String rid = r.getParen(0);
+            String name = r.getParen(1);
+            String link = rid.substring(name.length()+3, rid.length()-1);
+            links.add(link);
+            names.add(name);
+            int where = line.indexOf(rid);
+            line = line.substring(0, where) + "[" + i + "]" + line.substring(where+rid.length());
             i++;
+            d = r.match(line);
         }
+        return links;
+    }
+    
+    public static void main(String[] args) {
+        String line = "Hi! [Here is a link](https://test.link) see, if it works! \n [here](is another) EOF";
+        System.out.println(getNames(line));
+        System.out.println(getLinks(line));
     }
     public static Container parse(String post){
         String post2 = post + "\n";
+        ArrayList<String> names = getNames(post2);
+        ArrayList<String> links = getLinks(post2);
+        
         FlowLayout layout = new FlowLayout();
         Container body = new Container(layout);
-        for(String line : splitByDelimiter(post2, "\n")){
-            LinkedList<link> links = new LinkedList<>();
-            String op = line + "";
-            
-            //Links
-            while(line.contains("[")){
-                int pos = line.indexOf("[");
-                int pos2 = line.indexOf("]");
-                String before = line.substring(0, pos);
-                String after = line.substring(pos+1);
-                if(pos2 == -1){
-                    line = before + after;
-                }
-                else{
-                    String title = line.substring(pos, pos2);
-                    int pos3 = line.indexOf("(");
-                    int pos4 = line.indexOf(")");
-                    if(pos3 != -1 && pos4 != -1){
-                        String url = line.substring(pos3, pos4);
-                        links.add(new link(pos, title, url));
-                        after = line.substring(pos4+1);
-                        line = before + after;
-                    }
-                    else{
-                        line = before + after;
-                    }
-                }
-            }
-            
-            /*
-            //General style
-            if(startsWith(line, "#")){
-                SpanLabel header = new SpanLabel(op.substring(1));
-                int bg = ColorUtil.rgb(0, 0, 0);
-                int fg = ColorUtil.rgb(255, 255, 255);
-                Style card_style = new Style(fg, bg, Font.create("SYSTEM-PLAIN-LARGE"), Byte.MAX_VALUE);
-                header.setTextUnselectedStyle(card_style);
-                body.add(header);
-            }*/
-            int i = 0;
-            String buff = "";
-            for(char c : line.toCharArray()){
-                buff = buff + c;
-                boolean isLink = false;
-                for(link a : links){
-                    if(a.pos == i){
-                        isLink = true;
-                        SpanLabel txt = new SpanLabel(buff);
-                        body.add(txt);
-                        buff = "";
-                        
-                        int bg = ColorUtil.rgb(0, 0, 0);
-                        int fg = ColorUtil.rgb(25, 25, 255);
-                        Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
-                        SpanLabel alink = new SpanLabel(a.title);
-                        alink.setUnselectedStyle(card_style);
-                        alink.addPointerReleasedListener((arg0) -> {
-                            Display.getInstance().execute(a.url);
-                        });
-                        body.add(alink);
-                    }
-                }
-                i++;
-            }
-            SpanLabel txt = new SpanLabel(buff);
-            body.add(txt);
-            /*
-            int last = 0;
-            int ind = 0;
-            for(link i : links){
-                boolean isLast = false;
-                try {
-                    link next = links.get(ind + 1);
-                } catch (Exception e) {
-                    isLast = true;
-                }
-                
-                String before = line.substring(last, i.pos);
-                body.add(new SpanLabel(before));
-                int bg = ColorUtil.rgb(0, 0, 0);
-                int fg = ColorUtil.rgb(25, 25, 255);
-                Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
-                SpanLabel alink = new SpanLabel(i.title);
-                alink.setUnselectedStyle(card_style);
-                alink.addPointerReleasedListener((arg0) -> {
-                    Display.getInstance().execute(i.url);
-                });
-                body.add(alink);
-                if(isLast){
-                    String next = line.substring(i.pos);
-                    body.add(new SpanLabel(next));
-                }
-                ind++;
-            }
-            */
+        
+        SpanLabel posts = new SpanLabel(post2);
+        body.add(posts);
+        
+        int i = 0;
+        for(String name : names){
+            String link = links.get(i);
+
+            int bg = ColorUtil.rgb(0, 0, 0);
+            int fg = ColorUtil.rgb(25, 25, 255);
+            Style card_style = new Style(fg, bg, Font.getDefaultFont(), Byte.MAX_VALUE);
+            SpanLabel alink = new SpanLabel(name);
+            alink.setUnselectedStyle(card_style);
+            alink.addPointerReleasedListener((arg0) -> {
+                Display.getInstance().execute(link);
+            });
+            body.add(alink);
         }
+        
+        
         return body;
     }
     static boolean startsWith(String line, String with){

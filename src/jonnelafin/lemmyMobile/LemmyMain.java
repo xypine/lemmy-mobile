@@ -192,7 +192,7 @@ public class LemmyMain {
             postC.add(new TextArea(document)); //new TextArea(htmlBody)
             postC.add(new SpanLabel("Post by " + post.get("creator_name")));
             //postC.add(commentSortCont);
-        f.add(postC);
+        f.add(Parser.parse(document));
         f.add(new Label(commentCount2 + " Comments"));
         f.add(commentCont);
         //f.add()
