@@ -12,6 +12,8 @@ import com.codename1.ui.Display;
 import com.codename1.ui.Font;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.util.regex.RE;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -25,36 +27,36 @@ public class Parser {
     
     
     public static void main(String[] args) {
-        String line = "Hi! [Here is a link](https://test.link) see, if it works! \n[here](is another) EOF";
-        System.out.println(startsWith(line, "####."));
+        String line = "Hi! [Here is a link](https://test.link) see, if it works! \n [here](is another) EOF";
         
         
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> links = new ArrayList<>();
         
-        while(line.contains("[")){
-            int pos = line.indexOf("[");
-            int pos2 = line.indexOf("]");
-            String before = line.substring(0, pos);
-            String after = line.substring(pos+1);
-            if(pos2 == -1){
-                line = before + after;
-            }
-            else{
-                String title = line.substring(pos, pos2);
-                int pos3 = line.indexOf("(");
-                int pos4 = line.indexOf(")");
-                if(pos3 != -1 && pos4 != -1){
-                    String url = line.substring(pos3, pos4);
-                    //links.add(new link(pos, title, url));
-                    after = line.substring(pos4+1);
-                    line = before + after;
-                }
-                else{
-                    line = before + after;
-                }
-            }
+        RE r = new RE("(?:__|[*#])|\\[(.*?)\\]\\(.*?\\)");
+        boolean d = r.match(line);
+        int i = 0;
+        while(d){
+            System.out.println(r.match(line));
+            String rid = r.getParen(0);
+            String name = r.getParen(1);
+            String link = rid.substring(name.length()+3, rid.length()-1);
+            links.add(link);
+            names.add(name);
+            int where = line.indexOf(rid);
+            line = line.substring(0, where) + "[" + i + "]" + line.substring(where+rid.length());
+            System.out.println("Name: " + name);
+            i++;
+            d = r.match(line);
         }
-        System.out.println(line);
         
+        System.out.println(line);
+        System.out.println("Links: ");
+        i = 0;
+        for(String l : names){
+            System.out.println("    [" + i + "]: " + l + ", " + links.get(i));
+            i++;
+        }
     }
     public static Container parse(String post){
         String post2 = post + "\n";
